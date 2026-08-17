@@ -20,13 +20,18 @@ import { LocationFilter } from "@/components/Filters/LocationFilter";
 import { LevelFilter } from "@/components/Filters/LevelFilter";
 import { ChartSettingsPanel } from "@/components/Settings/ChartSettingsPanel";
 import { ExportMenu } from "@/components/Export/ExportMenu";
-import type { LayoutMode } from "@/types/chartConfig";
+import type { LayoutMode, RankBy } from "@/types/chartConfig";
 
 const LAYOUT_OPTIONS: { value: LayoutMode; label: string }[] = [
   { value: "vertical", label: "Vertical (top-down)" },
   { value: "horizontal", label: "Horizontal (left-right)" },
   { value: "compact", label: "Compact" },
   { value: "department", label: "Department-grouped" },
+];
+
+const RANK_BY_OPTIONS: { value: RankBy; label: string }[] = [
+  { value: "reporting", label: "Rank by: Reporting Level" },
+  { value: "designation", label: "Rank by: Designation Level" },
 ];
 
 export function ChartToolbar({ onBackToDashboard }: { onBackToDashboard: () => void }) {
@@ -37,6 +42,8 @@ export function ChartToolbar({ onBackToDashboard }: { onBackToDashboard: () => v
   const expandAll = useOrgStore((s) => s.expandAll);
   const reactFlow = useReactFlow();
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const isDesignationRanked = chartConfig.rankBy === "designation";
 
   return (
     <div className="flex flex-col gap-2.5 border-b border-ink-200 bg-white px-4 py-3">
@@ -69,12 +76,29 @@ export function ChartToolbar({ onBackToDashboard }: { onBackToDashboard: () => v
         <DepartmentFilter />
         <LocationFilter />
         <LevelFilter />
-        <Select
-          value={chartConfig.layout}
-          onValueChange={(v) => updateChartConfig({ layout: v })}
-          options={LAYOUT_OPTIONS}
-          ariaLabel="Layout"
-        />
+        <Tooltip
+          label={
+            isDesignationRanked
+              ? "Layout choice doesn't apply while ranking by designation level — that view always arranges senior-to-junior columns left to right."
+              : "How the reporting tree is arranged"
+          }
+        >
+          <Select
+            value={chartConfig.layout}
+            onValueChange={(v) => updateChartConfig({ layout: v })}
+            options={LAYOUT_OPTIONS}
+            ariaLabel="Layout"
+            disabled={isDesignationRanked}
+          />
+        </Tooltip>
+        <Tooltip label="Reporting: row/column = how many reporting hops from the top. Designation: always arranges senior-to-junior designation-level columns left to right, with real reporting lines connecting people across columns.">
+          <Select
+            value={chartConfig.rankBy}
+            onValueChange={(v) => updateChartConfig({ rankBy: v })}
+            options={RANK_BY_OPTIONS}
+            ariaLabel="Rank by"
+          />
+        </Tooltip>
 
         <div className="ml-auto flex items-center gap-1">
           <Tooltip label="Zoom out">

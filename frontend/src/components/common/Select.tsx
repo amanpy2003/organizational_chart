@@ -1,5 +1,6 @@
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
+import clsx from "clsx";
 
 interface SelectOption<T extends string> {
   value: T;
@@ -12,17 +13,26 @@ interface SelectProps<T extends string> {
   options: SelectOption<T>[];
   ariaLabel?: string;
   className?: string;
+  disabled?: boolean;
 }
 
-export function Select<T extends string>({ value, onValueChange, options, ariaLabel, className }: SelectProps<T>) {
+export function Select<T extends string>({
+  value,
+  onValueChange,
+  options,
+  ariaLabel,
+  className,
+  disabled,
+}: SelectProps<T>) {
   return (
-    <SelectPrimitive.Root value={value} onValueChange={(v) => onValueChange(v as T)}>
+    <SelectPrimitive.Root value={value} onValueChange={(v) => onValueChange(v as T)} disabled={disabled}>
       <SelectPrimitive.Trigger
         aria-label={ariaLabel}
-        className={
+        className={clsx(
           className ??
-          "inline-flex h-9 items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-3 text-sm text-ink-700 shadow-sm hover:bg-ink-50 focus:outline-none focus:ring-2 focus:ring-brand-200"
-        }
+            "inline-flex h-9 items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-3 text-sm text-ink-700 shadow-sm hover:bg-ink-50 focus:outline-none focus:ring-2 focus:ring-brand-200",
+          disabled && "cursor-not-allowed opacity-50 hover:bg-white"
+        )}
       >
         <SelectPrimitive.Value />
         <SelectPrimitive.Icon>

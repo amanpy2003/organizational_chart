@@ -1,5 +1,15 @@
 export type LayoutMode = "vertical" | "horizontal" | "compact" | "department";
 
+/** What determines each card's row/column position:
+ * - "reporting": how deep they are in the actual reporting chain (default,
+ *   existing behavior).
+ * - "designation": their designation-hierarchy level (1 Vice Chairman ... 8
+ *   Supervisor/Trainee/Retainer), independent of reporting depth. Real
+ *   reporting-line connectors are still drawn between actual manager/report
+ *   pairs — they just may span across levels visually when a manager and
+ *   report aren't adjacent designation levels. */
+export type RankBy = "reporting" | "designation";
+
 export type ConnectorStyle = "orthogonal" | "curved" | "straight";
 
 export interface CardFieldVisibility {
@@ -21,12 +31,14 @@ export interface AppearanceConfig {
 
 export interface ChartConfig {
   layout: LayoutMode;
+  rankBy: RankBy;
   fields: CardFieldVisibility;
   appearance: AppearanceConfig;
 }
 
 export const DEFAULT_CHART_CONFIG: ChartConfig = {
   layout: "vertical",
+  rankBy: "reporting",
   fields: {
     showEmployeeId: false,
     showDesignation: true,

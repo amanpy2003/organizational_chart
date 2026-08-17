@@ -218,6 +218,17 @@ export const useOrgStore = create<OrgState>()(
     }),
     {
       name: "org-chart-session",
+      // Bump this whenever a field is added to/removed from Employee/OrgNode
+      // (or anything else persisted below) that isn't optional. Without it, a
+      // browser holding an older cached upload silently keeps missing
+      // fields forever — e.g. designation_level defaulting to undefined for
+      // every employee, which reads as "nobody has a known level" instead
+      // of erroring, so it never surfaces as a bug report about a crash,
+      // only as "the chart looks wrong". Bumping the version makes zustand
+      // discard an incompatible cache and fall back to initial (empty)
+      // state instead of rendering it, so the user just sees the normal
+      // upload screen and re-uploads with fresh data.
+      version: 2,
       partialize: (state) => ({
         employees: state.employees,
         trees: state.trees,

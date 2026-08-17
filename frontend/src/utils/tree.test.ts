@@ -23,6 +23,7 @@ function makeNode(id: string, children: OrgNode[] = [], department = "Corporate"
     status: "",
     level: "",
     department_color: "#2563EB",
+    designation_level: 0,
     depth: 0,
     subtree_size: children.length,
     children,

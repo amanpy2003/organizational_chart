@@ -20,6 +20,9 @@ class EmployeeSchema(BaseModel):
     direct_report_ids: list[str] = []
     reporting_chain: list[str] = []
     department_color: str | None = None
+    # 1 (Vice Chairman) through 8 (Supervisor/Trainee/Retainer), or 0 if the
+    # designation didn't match any known keyword. See designation_level_service.
+    designation_level: int = 0
 
 
 class OrgNodeSchema(BaseModel):
@@ -36,6 +39,7 @@ class OrgNodeSchema(BaseModel):
     status: str = ""
     level: str = ""
     department_color: str | None = None
+    designation_level: int = 0
     depth: int = 0
     subtree_size: int = 0
     children: list["OrgNodeSchema"] = []

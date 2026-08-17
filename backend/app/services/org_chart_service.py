@@ -8,6 +8,7 @@ from __future__ import annotations
 from app.models.employee import OrgNode
 from app.schemas.employee import EmployeeSchema, OrgNodeSchema
 from app.schemas.validation import OrgSummary, ValidationResult
+from app.services.designation_level_service import classify_designation
 from app.services.hierarchy_service import HierarchyResult, max_depth
 from app.utils.colors import assign_department_colors
 
@@ -45,6 +46,7 @@ def build_chart_payload(
                 direct_report_ids=hierarchy.direct_reports.get(e.employee_id, []),
                 reporting_chain=hierarchy.reporting_chain.get(e.employee_id, []),
                 department_color=color_by_department.get(dept),
+                designation_level=classify_designation(e.designation),
             )
         )
 
@@ -87,6 +89,7 @@ def _to_node_schema(
         status=e.status,
         level=e.level,
         department_color=color_by_department.get(dept),
+        designation_level=classify_designation(e.designation),
         depth=node.depth,
         subtree_size=node.subtree_size,
         children=[

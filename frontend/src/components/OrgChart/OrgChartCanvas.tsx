@@ -22,16 +22,21 @@ export function OrgChartCanvas() {
   const collapsedIds = useOrgStore((s) => s.collapsedIds);
   const chartConfig = useOrgStore((s) => s.chartConfig);
   const selectedEmployeeId = useOrgStore((s) => s.selectedEmployeeId);
+  const selectEmployee = useOrgStore((s) => s.selectEmployee);
   const visibleIds = useFilteredNodeIds();
   const reactFlow = useReactFlow();
   const hasFitOnce = useRef(false);
 
   const layout = chartConfig.layout === "department" ? "vertical" : chartConfig.layout;
+  // Department-grouped child ordering only makes sense for the reporting-
+  // depth layouts — designation-ranked mode arranges by level column instead
+  // and ignores the Layout selector entirely (see buildRankedGraph).
+  const isDesignationRanked = chartConfig.rankBy === "designation";
 
   const trees_sorted = useMemo(() => {
-    if (chartConfig.layout !== "department") return trees;
+    if (isDesignationRanked || chartConfig.layout !== "department") return trees;
     return sortTreeByDepartment(trees);
-  }, [trees, chartConfig.layout]);
+  }, [trees, chartConfig.layout, isDesignationRanked]);
 
   const highlightedIds = useMemo(() => {
     if (!selectedEmployeeId) return new Set<string>();
@@ -46,9 +51,10 @@ export function OrgChartCanvas() {
         visibleIds,
         highlightedIds,
         layout,
+        rankBy: chartConfig.rankBy,
         appearance: chartConfig.appearance,
       }),
-    [trees_sorted, collapsedIds, visibleIds, highlightedIds, layout, chartConfig.appearance]
+    [trees_sorted, collapsedIds, visibleIds, highlightedIds, layout, chartConfig.rankBy, chartConfig.appearance]
   );
 
   useEffect(() => {
@@ -65,7 +71,7 @@ export function OrgChartCanvas() {
     }, 50);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trees_sorted.length, layout]);
+  }, [trees_sorted.length, layout, chartConfig.rankBy]);
 
   useEffect(() => {
     if (!selectedEmployeeId) return;
@@ -87,6 +93,7 @@ export function OrgChartCanvas() {
       nodesDraggable={false}
       nodesConnectable={false}
       elementsSelectable
+      onPaneClick={() => selectEmployee(null)}
     >
       <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#E2E8F0" />
       <Controls showInteractive={false} position="bottom-left" />

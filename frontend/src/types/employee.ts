@@ -14,6 +14,9 @@ export interface Employee {
   direct_report_ids: string[];
   reporting_chain: string[];
   department_color: string | null;
+  /** 1 (Vice Chairman) through 8 (Supervisor/Trainee/Retainer), or 0 if the
+   * designation didn't match any known keyword. */
+  designation_level: number;
 }
 
 export interface OrgNode {
@@ -28,6 +31,7 @@ export interface OrgNode {
   status: string;
   level: string;
   department_color: string | null;
+  designation_level: number;
   depth: number;
   subtree_size: number;
   children: OrgNode[];

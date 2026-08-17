@@ -19,13 +19,12 @@ export default function App() {
   return (
     <TooltipProvider>
       <div className="h-screen w-screen overflow-hidden bg-ink-50">
-        {route === "dashboard" ? (
+        {route === "dashboard" && (
           <div className="h-full overflow-y-auto">
             <DashboardPage onOpenChart={goToChart} />
           </div>
-        ) : (
-          <ChartPage onBackToDashboard={() => setRoute("dashboard")} />
         )}
+        {route === "chart" && <ChartPage onBackToDashboard={() => setRoute("dashboard")} />}
       </div>
       <ToastViewport />
     </TooltipProvider>
