@@ -1,0 +1,11 @@
+# Mirrors backend/requirements.txt — duplicated here because Vercel's Python
+# builder looks for requirements.txt next to the function file (api/index.py)
+# or at the project root, not inside backend/. Keep both in sync; the
+# canonical/local-dev copy is backend/requirements.txt.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+pydantic==2.10.4
+pydantic-settings==2.7.1
+openpyxl==3.1.5
+reportlab==4.2.5

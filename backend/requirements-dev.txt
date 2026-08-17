@@ -1,0 +1,6 @@
+# Test-only dependencies — not needed by the deployed app (Vercel function
+# or otherwise), so kept out of requirements.txt to keep the deployed
+# package small and cold-starts fast.
+-r requirements.txt
+pytest==8.3.4
+httpx==0.28.1
