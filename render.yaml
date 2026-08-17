@@ -1,0 +1,45 @@
+# Render Blueprint — deploys both services from this one file.
+# In the Render dashboard: New + -> Blueprint -> select this repo.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# The two URLs below assume the default service names aren't already taken
+# by someone else on Render (names must be globally unique). If Render
+# renames either service during setup, update the corresponding env var to
+# match the actual assigned URL, then redeploy.
+
+services:
+  - type: web
+    name: orgchart-backend
+    env: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: CORS_ORIGINS
+        value: https://orgchart-frontend.onrender.com
+      - key: MAX_UPLOAD_MB
+        value: "15"
+      - key: MAX_EMPLOYEES
+        value: "5000"
+
+  - type: web
+    name: orgchart-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://orgchart-backend.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
