@@ -9,6 +9,8 @@ backend/.pytest_cache/
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+frontend/*.tsbuildinfo
+frontend/node_modules/.tmp/
 
 # Env
 .env
